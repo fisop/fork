@@ -8,6 +8,12 @@ Repositorio para el esqueleto del lab [fork](https://fisop.github.io/website/lab
 $ make
 ```
 
+## Pruebas
+
+```bash
+make test
+```
+
 ## Linter
 
 ```bash
