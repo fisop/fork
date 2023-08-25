@@ -9,10 +9,13 @@ all: $(PROGS)
 xargs: xargs.o
 primes: primes.o
 
+test:
+	./tests/run $(realpath .)
+
 format: .clang-files .clang-format
 	xargs -r clang-format -i <$<
 
 clean:
 	rm -f $(PROGS) *.o core vgcore.*
 
-.PHONY: all clean format
+.PHONY: all clean format test
