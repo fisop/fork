@@ -7,7 +7,7 @@ from os import getpid
 from resource import prlimit, RLIMIT_NPROC, RLIMIT_NOFILE 
 from subprocess import PIPE, run
 
-from utils import VALGRIND_COMMAND, are_equal, format_result, run_command
+from utils import VALGRIND_COMMAND, format_result, run_command
 
 TESTS = [
     {
@@ -73,13 +73,12 @@ def run_test(binary_path, test_config, run_valgrind=False):
     number = test_config['number']
     valgrind_enabled = test_config['valgrind_enabled']
 
-    expected_lines = set(generate_primes(number))
-
+    expected_primes = set(generate_primes(number))
     resource_msg = None
 
     try:
-        result_lines, valgrind_report = test_primes(binary_path, number, run_valgrind and valgrind_enabled)
-        res = are_equal(expected_lines, result_lines)
+        result_primes, valgrind_report = test_primes(binary_path, number, run_valgrind and valgrind_enabled)
+        res = result_primes == expected_primes
     except Exception as e:
         resource_msg = f'Resource error - {e}'
         res = False
@@ -91,8 +90,8 @@ def run_test(binary_path, test_config, run_valgrind=False):
         return res
 
     if not res:
-        diff_res = expected_lines ^ result_lines
-        if not (expected_lines <= result_lines):
+        diff_res = expected_primes ^ result_primes
+        if not (expected_primes <= result_primes):
             # missing prime numbers in result
             assertion_msg = f"""
 Prime numbers missing:

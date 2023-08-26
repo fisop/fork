@@ -14,12 +14,6 @@ def color(text, color_name):
 def format_result(result):
     return color('OK', 'green') if result else color('FAIL', 'red')
 
-def are_equal(expected, current):
-    # ^ symmetric difference operator
-    diff = expected ^ current
-
-    return len(diff) == 0
-
 def run_command(args, input=None, run_valgrind=False, cwd=None):
     if run_valgrind:
         args = VALGRIND_COMMAND + args
