@@ -56,19 +56,10 @@ def exec_command(args, run_valgrind=False):
 def test_primes(binary_path, max_number, run_valgrind):
     output, valgrind_report = exec_command([binary_path, str(max_number)], run_valgrind)
 
-    # - the `filter` removes lines not matching with the
-    # pattern `primo %d`
-    # - the `map` transforms the previous pattern leaving
-    # just the number part `%d`
-    return set(
-        map(
-            lambda s: int(s.split(' ')[1]),
-            filter(
-                lambda x: re.search(r'primo \d{1,4}', x, re.IGNORECASE),
-                output
-            )
-        )
-    ), valgrind_report
+    # Compute set of primes emitted.
+    primes = {int(m[1]) for l in output if (m := re.search(r'primo (\d{1,4})', l, re.I))}
+
+    return primes, valgrind_report
 
 def generate_primes(number):
     # JOS code (grade-lab5) to calculate primes in a given range
