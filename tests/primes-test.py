@@ -2,14 +2,34 @@
 
 import re
 import sys
+import subprocess
 
+from dataclasses import dataclass
+
+# FIXME: remove; unused.
 from os import getpid
 from resource import prlimit, RLIMIT_NPROC, RLIMIT_NOFILE 
 from subprocess import PIPE, run
 
 from utils import VALGRIND_COMMAND, format_result, run_command
 
+# I tested my implementation with all limits below. -d
+@dataclass
+class PrimesTest:
+    max_prime: int
+    task_limit: int
+    fd_limit: int = 6
+
+# NOTE: task_limit is computed as the total count of primes, plus two, i.e.:
+# nproc = 2 + sum(1 for _ in generate_primes(number))
 TESTS = [
+    PrimesTest(10, 6),
+    PrimesTest(100, 27),
+    PrimesTest(1000, 170),
+    PrimesTest(10000, 1231),
+]
+
+OLD_TESTS = [
     {
         'description': 'correct primes up to 10',
         'number': 10,
@@ -53,8 +73,20 @@ def exec_command(args, run_valgrind=False):
 
     return set(filter(lambda l: l != '', output.split('\n'))), valgrind_report
 
-def test_primes(binary_path, max_number, run_valgrind):
-    output, valgrind_report = exec_command([binary_path, str(max_number)], run_valgrind)
+def test_primes(binary_path, test_config):
+    # TODO(dato): re-introduce Valgrind support.
+    valgrind_report = None
+    # args = [binary_path, str(test_config.max_prime)]
+    args = ['systemd-run', '-qPG', '--user', '--wait']
+    args.extend(['-p', f'TasksMax={test_config.task_limit}'])
+    args.extend(['-p', f'LimitNOFILE={test_config.fd_limit}'])
+    args.extend(['--', binary_path, str(test_config.max_prime)])
+
+    proc = subprocess.run(args, text=True, capture_output=True)
+    output = proc.stdout.split('\n')
+
+    if errors := proc.stderr:
+        raise Exception(errors)
 
     # Compute set of primes emitted.
     primes = {int(m[1]) for l in output if (m := re.search(r'primo (\d{1,4})', l, re.I))}
@@ -69,15 +101,14 @@ def generate_primes(number):
         rest = [n for n in rest if n % rest[0]]
 
 def run_test(binary_path, test_config, run_valgrind=False):
-    description = test_config['description']
-    number = test_config['number']
-    valgrind_enabled = test_config['valgrind_enabled']
+    number = test_config.max_prime
+    description = f'correct primes up to {number}'
 
     expected_primes = set(generate_primes(number))
     resource_msg = None
 
     try:
-        result_primes, valgrind_report = test_primes(binary_path, number, run_valgrind and valgrind_enabled)
+        result_primes, valgrind_report = test_primes(binary_path, test_config)
         res = result_primes == expected_primes
     except Exception as e:
         resource_msg = f'Resource error - {e}'
