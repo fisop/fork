@@ -5,7 +5,7 @@
 #include <string.h>
 
 #define MAX_LINE_LENGTH 1024
-#define NARGS 4  // Número de argumentos por paquete
+#define NARGS 4  
 #ifndef NARGS
 #endif
 int main(int argc, char *argv[]) {
@@ -46,10 +46,6 @@ int main(int argc, char *argv[]) {
                 int status;
                 waitpid(pid, &status, 0);
 
-                // Liberar la memoria de los argumentos
-                for (int i = 1; i < arg_count; i++) {
-                  //  free(args[i]);
-                }
                 arg_count = 1; // Reiniciar el contador de argumentos
             }
         }
