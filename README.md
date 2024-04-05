@@ -5,7 +5,7 @@ Repositorio para el esqueleto del lab [fork](https://fisop.github.io/website/lab
 ## Compilar
 
 ```bash
-$ make
+make
 ```
 
 ## Pruebas
@@ -17,5 +17,5 @@ make test
 ## Linter
 
 ```bash
-$ make format
+make format
 ```
