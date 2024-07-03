@@ -7,7 +7,7 @@ from os import getpid
 from resource import prlimit, RLIMIT_NPROC, RLIMIT_NOFILE 
 from subprocess import PIPE, run
 
-from utils import VALGRIND_COMMAND, are_equal, format_result, run_command
+from utils import VALGRIND_COMMAND, format_result, run_command
 
 TESTS = [
     {
@@ -56,19 +56,10 @@ def exec_command(args, run_valgrind=False):
 def test_primes(binary_path, max_number, run_valgrind):
     output, valgrind_report = exec_command([binary_path, str(max_number)], run_valgrind)
 
-    # - the `filter` removes lines not matching with the
-    # pattern `primo %d`
-    # - the `map` transforms the previous pattern leaving
-    # just the number part `%d`
-    return set(
-        map(
-            lambda s: int(s.split(' ')[1]),
-            filter(
-                lambda x: re.search(r'primo \d{1,4}', x, re.IGNORECASE),
-                output
-            )
-        )
-    ), valgrind_report
+    # Compute set of primes emitted.
+    primes = {int(m[1]) for l in output if (m := re.search(r'primo (\d{1,4})', l, re.I))}
+
+    return primes, valgrind_report
 
 def generate_primes(number):
     # JOS code (grade-lab5) to calculate primes in a given range
@@ -82,13 +73,12 @@ def run_test(binary_path, test_config, run_valgrind=False):
     number = test_config['number']
     valgrind_enabled = test_config['valgrind_enabled']
 
-    expected_lines = set(generate_primes(number))
-
+    expected_primes = set(generate_primes(number))
     resource_msg = None
 
     try:
-        result_lines, valgrind_report = test_primes(binary_path, number, run_valgrind and valgrind_enabled)
-        res = are_equal(expected_lines, result_lines)
+        result_primes, valgrind_report = test_primes(binary_path, number, run_valgrind and valgrind_enabled)
+        res = result_primes == expected_primes
     except Exception as e:
         resource_msg = f'Resource error - {e}'
         res = False
@@ -100,8 +90,8 @@ def run_test(binary_path, test_config, run_valgrind=False):
         return res
 
     if not res:
-        diff_res = expected_lines ^ result_lines
-        if not (expected_lines <= result_lines):
+        diff_res = expected_primes ^ result_primes
+        if not (expected_primes <= result_primes):
             # missing prime numbers in result
             assertion_msg = f"""
 Prime numbers missing:
