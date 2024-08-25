@@ -6,7 +6,7 @@ import sys
 from math import ceil
 from subprocess import PIPE, run
 
-from utils import VALGRIND_COMMAND, are_equal, color, format_result, run_command
+from utils import VALGRIND_COMMAND, color, format_result, run_command
 
 MAX_ARGS = 4
 
@@ -69,7 +69,7 @@ def run_test(binary_path, test_config, run_valgrind=False):
 
     result_lines, valgrind_report = test_packaging(binary_path, test_lines, run_valgrind)
 
-    res = are_equal(expected_lines, result_lines)
+    res = expected_lines == result_lines
 
     print(f'  {description}: {format_result(res)}')
 
