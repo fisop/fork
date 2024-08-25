@@ -3,8 +3,8 @@
 import sys
 
 def main():
-    for i, arg in enumerate(sys.argv):
-        print(f'arg[{i}]: {arg}')
+    for index in range(1, len(sys.argv)):
+        print(f'arg[{index}]: {sys.argv[index]}')
 
 if __name__ == '__main__':
     main()
