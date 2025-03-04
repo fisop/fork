@@ -10,7 +10,7 @@ xargs: xargs.o
 primes: primes.o
 
 test:
-	./tests/run "$(realpath .)"
+	./tests/run
 
 format: .clang-files .clang-format
 	xargs -r clang-format -i <$<

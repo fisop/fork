@@ -1,10 +1,9 @@
-FROM python:3.10-alpine
+FROM ubuntu:24.04
 
-RUN apk update && apk add --no-cache make gcc build-base valgrind
+RUN DEBIAN_FRONTEND=noninteractive
 
-RUN adduser -D fisop
-USER fisop
-ENV PATH="/home/fisop/.local/bin:${PATH}"
+RUN apt update && apt install -y make gcc build-essential
+RUN apt install -y python3
 
 WORKDIR /fork
 
