@@ -19,3 +19,9 @@ make test
 ```bash
 make format
 ```
+
+Es necesario tener instalado `clang-format`. Basta con hacer:
+
+```bash
+sudo apt install clang-format
+```
