@@ -12,10 +12,13 @@ primes: primes.o
 test:
 	./tests/run
 
+test-native:
+	./tests/test-fork .
+
 format: .clang-files .clang-format
 	xargs -r clang-format -i <$<
 
 clean:
-	rm -f $(PROGS) *.o core vgcore.*
+	rm -f $(PROGS) *.o core vgcore.* -r tests/__pycache__
 
 .PHONY: all clean format test

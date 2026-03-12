@@ -14,6 +14,12 @@ make
 make test
 ```
 
+O se pueden correr de forma nativa haciendo:
+
+```bash
+make test-native
+```
+
 ## Linter
 
 ```bash
