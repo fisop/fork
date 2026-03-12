@@ -3,3 +3,4 @@ find
 pingpong
 primes
 xargs
+**/__pycache__
