@@ -21,4 +21,4 @@ format: .clang-files .clang-format
 clean:
 	rm -f $(PROGS) *.o core vgcore.* -r tests/__pycache__
 
-.PHONY: all clean format test
+.PHONY: all clean format test test-native
