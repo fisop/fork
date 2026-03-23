@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
-from base64 import encode
 import sys
 
 from math import ceil
-from subprocess import PIPE, run
 
-from utils import VALGRIND_COMMAND, color, format_result, run_command
+from utils import color, format_result, run_command
 
 MAX_ARGS = 4
 

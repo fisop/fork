@@ -5,9 +5,8 @@ import sys
 
 from os import getpid
 from resource import prlimit, RLIMIT_NPROC, RLIMIT_NOFILE 
-from subprocess import PIPE, run
 
-from utils import VALGRIND_COMMAND, format_result, run_command
+from utils import format_result, run_command
 
 TESTS = [
     {
