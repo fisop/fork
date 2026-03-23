@@ -35,13 +35,13 @@ def exec_command(args, run_valgrind=False):
     # limits the number of open file descriptor
     # that the process or any of its child can have
     #
-    # it has to be set to one more that the desired number
+    # it has to be set to one more than the desired number
     prlimit(getpid(), RLIMIT_NOFILE, (10, 100))
 
     # limits the number of process that can be created
     # by a given process
     #
-    # for the number 10000, a threshold of 3000 its OK
+    # for the number 10000, a threshold of 3000 is OK
     #   (found it empirically -pic)
     prlimit(getpid(), RLIMIT_NPROC, (1900, 3000))
 
